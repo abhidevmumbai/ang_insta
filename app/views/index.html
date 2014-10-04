@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en" ng-app="instaApp">
+	<head>
+		<title>
+			Home
+		</title>
+		<meta charset='utf-8'>
+		<meta name='viewport', content='width=device-width, initial-scale=1.0'>
+		<link href='static/css/bootstrap.css' type='text/css' rel='stylesheet' />
+		<link href='static/css/bootstrap-responsive.css' type='text/css' rel='stylesheet' />
+		<link href='static/css/main.css' type='text/css' rel='stylesheet' />
+	</head>
+	<body>
+		<div class="navbar navbar-inverse navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="navbar-collapse"></button>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					<a class="navbar-brand" href='/'>Insta-Node</a>
+					<div class="collapse navbar-collapse">
+						<ul class="nav navbar-nav pull-left">
+							<li>
+								<a href='#feed'>Feed</a>
+							</li>
+						</ul>
+						<ul class="nav navbar-nav pull-right">
+							<li>
+								<a href='#login'>Login</a>
+							</li>
+							<li>
+								<a href='#logout'>Logout</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>	
+
+		<div class="container cont">
+			<div class="row-fluid" ng-view>
+				<div class="offset2"></div>
+				<div class="span8">
+					<h3>Welcome #{user.full_name} !!!</h3>
+				</div>
+				<div class="offset2"></div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="static/js/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="static/js/angular.min.js"></script>
+		<script type="text/javascript" src="static/js/angular-route.min.js"></script>
+		<script type="text/javascript" src="static/js/angular-resource.min.js"></script>
+		<script type="text/javascript" src="modules/controllers.js"></script>
+		<script type="text/javascript" src="modules/services.js"></script>
+		<script type="text/javascript" src="modules/app.js"></script>
+		<script src='static/js/main.js'></script>
+	</body>
+</html>
