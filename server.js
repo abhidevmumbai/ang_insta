@@ -62,9 +62,39 @@ app.configure(function() {
 
 
 app.get('/', function(req, res){
-	fs.readFile(__dirname + '/app/views/index.html', 'utf8', function(err, text){
-        res.send(text);
-    });
+	// fs.readFile(__dirname + '/app/views/index.html', 'utf8', function(err, text){
+ //        res.send(text);
+ //    });
+	res.render('home');
+});
+
+// route to test if the user is logged in or not
+app.get('/loggedin', function(req, res) {
+  res.send(req.isAuthenticated() ? req.user : '0');
+});
+
+// route to log in
+app.post('/login', passport.authenticate('instagram'), function(req, res) {
+  res.send(req.user);
+});
+
+// route to log out
+app.post('/logout', function(req, res){
+  req.logOut();
+  res.send(200);
+});
+
+// Instagram auth
+app.get('/auth/instagram', passport.authenticate('instagram'), function(req, res){
+	// The request will be redirected to Instagram for authentication, so this
+	// function will not be called.
+});
+
+app.get('/auth/instagram/callback', passport.authenticate('instagram', { failureRedirect: '/#login' }), function(req, res) {
+	// If auth failed, redirect to login page
+	// res.redirect('/#account');
+	console.log(req.user);
+	res.send(req.user);
 });
 
 var server = http.createServer(app);

@@ -1,0 +1,50 @@
+doctype html
+html(lang='en', ng-app='instaApp')
+head
+	block title
+		title Home
+	meta(charset='utf-8')
+	meta(name='viewport', content='width=device-width, initial-scale=1.0')
+	link(href='static/css/bootstrap.css' type='text/css' rel='stylesheet')
+	link(href='static/css/bootstrap-responsive.css' type='text/css' rel='stylesheet')
+	link(href='static/css/main.css' type='text/css' rel='stylesheet')
+body
+	.navbar.navbar-inverse.navbar-fixed-top
+		.navbar-inner
+			.container
+				button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+					span.icon-bar
+					span.icon-bar
+					span.icon-bar
+				a.navbar-brand(href='/') Insta-Node
+				.collapse.navbar-collapse
+					ul.nav.navbar-nav.pull-left
+						li
+							a(href='#feed') Feed
+					ul.nav.navbar-nav.pull-right
+						if !user
+							li
+								a(href='#login') Login
+						else
+							li.active
+								a(href='#account') #{user.username}
+							li
+								a(href='#logout') Logout
+
+	.container.cont
+		.row-fluid(ng-view)
+			.offset2
+			.span8
+				h3 Welcome !!!
+			.offset2
+	script(src='static/js/jquery-1.9.1.min.js')
+	script(src='static/js/bootstrap.min.js')
+	script(src='static/js/angular.min.js')
+	script(src='static/js/angular-route.min.js')
+	script(src='static/js/angular-resource.min.js')
+	script(src='modules/controllers.js')
+	script(src='modules/services.js')
+	script(src='modules/app.js')
+	script(src='static/js/main.js')
+
+	block scripts
