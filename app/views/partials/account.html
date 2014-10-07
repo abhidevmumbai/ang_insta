@@ -1,32 +1,32 @@
 <div class="offset2"></div>
-<div class="span8 account">
+<div class="span8 account" ng-init="foo=user">
 	<p>
 		<span class="profile_picture">
-			<img src='{user.profile_picture}' />
+			<img src='{{user.profile_picture}}' />
 	</p>
 	<p>
 		<strong>Username:</strong>
-		<span> {user.username}</span>
+		<span> {{user.username}}</span>
 	</p>
 	<p>
 		<strong>Name:</strong>
-		<span>{user.full_name}</span>
+		<span>{{user.full_name}}</span>
 	</p>
 	<p>
 		<strong>Bio:</strong>
-		<span>user.bio</span>
+		<span>{{user.bio}}</span>
 	</p>
 	<h4>
 		<span class="label label-success">Media</span>
-		<span class="stats">{user.counts.media}</span>
+		<span class="stats">{{user.counts.media}}</span>
 	</h4>
 	<h4>
 		<span class="label label-info">Followers</span>
-		<span class="stats">{user.counts.followed_by}</span>
+		<span class="stats">{{user.counts.followed_by}}</span>
 	</h4>
 	<h4>
 		<span class="label label-info">Following</span>
-		<span class="stats">{user.counts.follows}</span>
+		<span class="stats">{{user.counts.follows}}</span>
 	</h4>
 </div>
 <div class="offset2"></div>

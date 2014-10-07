@@ -2,26 +2,29 @@
 
 var instaAppControllers = angular.module('instaAppControllers', []);
 var foo = '';
-instaAppControllers.controller('AccountsCtrl', ['$scope', 'Posts',
-	function($scope, Posts) {
-	$scope.posts = null;
-	Posts.then(function (response) {
-		$scope.posts = response.data.response.posts;
-	});
-}]);
 
-instaAppControllers.controller('LoginCtrl', ['$scope', 'Posts',
-	function($scope, Posts) {
-	$scope.posts = null;
-	Posts.then(function (response) {
-		$scope.posts = response.data.response.posts;
-	});
-}]);
+
+
+instaAppControllers.controller('AccountsCtrl', ['$scope', 'Auth',
+	function($scope, Auth) {
+		$scope.user = Auth.user;
+		console.log('**************Account');
+		console.log($scope.user);
+	}
+]);
+
+instaAppControllers.controller('LoginCtrl', ['$scope', '$location', '$window','Auth',
+	function($scope, $location, $window, Auth) {
+		$scope.user = Auth.user;
+		console.log('**************Login');
+		
+	}
+]);
 
 instaAppControllers.controller('FeedsCtrl', ['$scope', 'Posts',
-	function($scope, Posts) {
-	$scope.posts = null;
-	Posts.then(function (response) {
-		$scope.posts = response.data.response.posts;
+	function($scope, Feed) {
+	$scope.feed = null;
+	Feed.then(function (response) {
+		$scope.feed = response.data.response.feed;
 	});
 }]);

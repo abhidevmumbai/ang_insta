@@ -1,40 +1,43 @@
 'use strict'
-// var foo;
-// function Posts($scope, $http) {
-//     $http.get('http://api.tumblr.com/v2/blog/allanimemangaquotes.tumblr.com/posts?api_key=pjKvJTdwNgCVEB0zX1q0ilC0x2PiFGSd7koSVoUFMbCwetlUPf').
-//         success(function(data) {
-//             $scope.posts = data;
-//             foo = data;
-//         });
-// }
-var tumblr_blogs = [
-	'http://api.tumblr.com/v2/blog/allanimemangaquotes.tumblr.com/posts', //allanimemangaquotes.tumblr.com
-	'http://api.tumblr.com/v2/blog/manga-anime-quotes.tumblr.com/posts', //manga-anime-quotes.tumblr.com
-	'http://api.tumblr.com/v2/blog/anime-quotes-to-live-by.tumblr.com/posts',//http://anime-quotes-to-live-by.tumblr.com
-	'http://api.tumblr.com/v2/blog/animequote.tumblr.com/posts',//http://animequote.tumblr.com
-	'http://api.tumblr.com/v2/blog/quotesfromanime.tumblr.com/posts',//http://quotesfromanime.tumblr.com
-	'http://api.tumblr.com/v2/blog/animesayings-quotes.tumblr.com/posts',//http://animesayings-quotes.tumblr.com
-]
-var instaAppServices = angular.module('instaAppServices', ['ngResource']);
 
-instaAppServices.factory('Posts', ['$resource', '$http',
-	function($resource, $http){
-		// delete $http.defaults.headers.common['X-Requested-With'];
+var instaAppServices = angular.module('instaAppServices', ['ngResource', 'ngCookies']);
 
-		var blog_url = tumblr_blogs[5];
-		return $http.jsonp(blog_url ,
-			{
-				params: {
-			        callback: 'JSON_CALLBACK',
-			        format:'json',			        
-			        api_key: 'pjKvJTdwNgCVEB0zX1q0ilC0x2PiFGSd7koSVoUFMbCwetlUPf'
-			    }
-			}).
-		        success(function(data) {
-		        	console.log(data);
-		            console.log('Succesfully fetched the Posts');
-		        });
+instaAppServices.factory('Auth', function($http, $cookieStore){
 
-	}
-]);
+    var currentUser = $cookieStore.get('user') || { user: ''};
+    console.log('currentUser: '+ currentUser);
+    $cookieStore.remove('user');
 
+    function changeUser(user) {
+        angular.extend(currentUser, user);
+    }
+
+    return {
+        isLoggedIn: function(user) {
+            if(user === undefined) {
+                user = currentUser;
+            }
+            return user.role.title === userRoles.user.title || user.role.title === userRoles.admin.title;
+        },
+        login: function(user, success, error) {
+            $http.post('/login', user).success(function(user){
+                changeUser(user);
+                success(user);
+            }).error(error);
+        },
+        logout: function(success, error) {
+            $http.post('/logout').success(function(){
+            	changeUser({
+                    username: ''
+                });
+                success();
+            }).error(error);
+        },
+        user: currentUser
+    };
+});
+
+
+instaAppServices.factory('Feed', function($http){
+
+});
