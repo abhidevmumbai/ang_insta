@@ -9,7 +9,7 @@ head
 	link(href='static/css/bootstrap-responsive.css' type='text/css' rel='stylesheet')
 	link(href='static/css/main.css' type='text/css' rel='stylesheet')
 body
-	.navbar.navbar-inverse.navbar-fixed-top
+	.navbar.navbar-inverse.navbar-fixed-top(data-ng-controller="NavCtrl")
 		.navbar-inner
 			.container
 				button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
@@ -26,22 +26,27 @@ body
 							li
 								a(href='#login') Login
 						else
-							li.active
-								a(href='#account') #{user.username}
 							li
-								a(href='#logout') Logout
+								a(href='#account') {{user.username}}
+							li
+								a(href='#logout', ng-click='logout()') Logout
 
 	.container.cont
 		.row-fluid(ng-view)
 			.offset2
-			.span8
-				h3 Welcome !!!
+			.span8.account
+			
 			.offset2
+		#alertBox.alert.alert-danger(data-ng-show="error")
+			button(type="button", class="close", data-ng-click="error = null;") &times;
+			strong Oh no!&nbsp;
+			span(data-ng-bind="error")
 	script(src='static/js/jquery-1.9.1.min.js')
 	script(src='static/js/bootstrap.min.js')
 	script(src='static/js/angular.min.js')
 	script(src='static/js/angular-route.min.js')
 	script(src='static/js/angular-resource.min.js')
+	script(src='static/js/angular-cookies.min.js')
 	script(src='modules/controllers.js')
 	script(src='modules/services.js')
 	script(src='modules/app.js')

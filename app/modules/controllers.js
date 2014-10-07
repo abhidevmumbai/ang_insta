@@ -3,7 +3,17 @@
 var instaAppControllers = angular.module('instaAppControllers', []);
 var foo = '';
 
+instaAppControllers.controller('NavCtrl', ['$rootScope', '$scope', '$location', 'Auth', function($rootScope, $scope, $location, Auth) {
+    $scope.user = Auth.user;
 
+    $scope.logout = function() {
+        Auth.logout(function() {
+            $location.path('/login');
+        }, function() {
+            $rootScope.error = "Failed to logout";
+        });
+    };
+}]);
 
 instaAppControllers.controller('AccountsCtrl', ['$scope', 'Auth',
 	function($scope, Auth) {
