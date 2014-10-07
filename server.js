@@ -1,11 +1,16 @@
 if (!process.env.NODE_ENV) process.env.NODE_ENV='development'
 
 var express = require('express'),
-	passport = require('passport'),
 	http = require('http'),
-	https = require('https'),
-	fs = require('fs'),
-	path = require('path'),
+	passport = require('passport')
+	path = require('path')
+	morgan = require('morgan')
+	bodyParser = require('body-parser')
+	methodOverride = require('method-override')
+	cookieParser = require('cookie-parser')
+	cookieSession = require('cookie-session')
+	session = require('express-session')
+	csrf = require('csurf'),
 	InstagramStrategy = require('passport-instagram').Strategy;
 
 // Instagram App id and secret
@@ -40,42 +45,92 @@ passport.use(new InstagramStrategy({
 var app = express();
 
 // configure Express
-app.configure(function() {
-	app.set('port', process.env.PORT || 3000);
-	app.use(express.favicon());
-	app.use(express.logger('dev'));
-	app.set('views', __dirname + '/app/views');
-	app.set('view engine', 'jade');
-	app.use(express.logger());
-	app.use(express.cookieParser());
-	app.use(express.bodyParser());
-	app.use(express.methodOverride());
-	app.use(express.session({ secret: 'keyboard cat' }));
-	// Initialize Passport!  Also use passport.session() middleware, to support
-	// persistent login sessions (recommended).
-	app.use(passport.initialize());
-	app.use(passport.session());
-	app.use(app.router);
-	// app.use(express.static(__dirname + 'app'));
-	app.use(express.static(path.join(__dirname, 'app')));
+app.set('port', process.env.PORT || 3000);
+app.set('views', __dirname + '/app/views');
+app.set('view engine', 'jade');
+app.use(morgan('dev'));
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+app.use(methodOverride());
+app.use(express.static(path.join(__dirname, 'app')));
+app.use(cookieParser());
+app.use(session({ secret: 'keyboard cat' }));
+
+var env = process.env.NODE_ENV || 'development';
+if ('development' === env || 'production' === env) {
+    app.use(csrf());
+    app.use(function(req, res, next) {
+        res.cookie('XSRF-TOKEN', req.csrfToken());
+        next();
+    });
+}
+// Initialize Passport!  Also use passport.session() middleware, to support
+// persistent login sessions (recommended).
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Instagram auth
+app.get('/auth/instagram', passport.authenticate('instagram'), function(req, res){
+	// The request will be redirected to Instagram for authentication, so this
+	// function will not be called.
 });
 
+app.get('/auth/instagram/callback', passport.authenticate('instagram', {successRedirect: '/account', failureRedirect: '/login'}), function(req, res) {
+	// res.redirect('/');
+	// // If auth failed, redirect to login page
+	// // passport.authenticate('instagram', function(err, user, info) {
+	// //     if (user === false) {
+	// //       // handle login error ...
+	// //     } else {
+	// //       // handle successful login ...
+	// //       res.redirect('account')
+	// //     }
+	// //   })(req, res, next);
 
-app.get('/', function(req, res){
+	// User = req.user._json.data;
+	// // res.send(req.user);
+});
+
+app.get('/*', function(req, res){
 	// fs.readFile(__dirname + '/app/views/index.html', 'utf8', function(err, text){
  //        res.send(text);
  //    });
-	res.render('home');
+
+     if(req.user) {
+        user = req.user._json.data;
+    
+	    res.cookie('user', JSON.stringify(user));
+	}
+
+    console.log('****************************************Home');
+    // console.log(user);
+    
+    res.render('home');
+
 });
+
+// route to log in
+app.post('/login', function(req, res) {
+	 passport.authenticate('instagram', function(req, res, next) {
+        if(err)     { return next(err); }
+        // if(!user)   { return res.send(400); }
+
+        req.logIn(req.user, function(err) {
+            if(err) {
+                return next(err);
+            }
+            console.log('****************************************Login');
+            console.log(user);
+            res.json(200, {"user": user });
+        });
+    })(req, res, next);
+  	// res.send(req.user);
+});
+
 
 // route to test if the user is logged in or not
 app.get('/loggedin', function(req, res) {
   res.send(req.isAuthenticated() ? req.user : '0');
-});
-
-// route to log in
-app.post('/login', passport.authenticate('instagram'), function(req, res) {
-  res.send(req.user);
 });
 
 // route to log out
@@ -84,18 +139,7 @@ app.post('/logout', function(req, res){
   res.send(200);
 });
 
-// Instagram auth
-app.get('/auth/instagram', passport.authenticate('instagram'), function(req, res){
-	// The request will be redirected to Instagram for authentication, so this
-	// function will not be called.
-});
 
-app.get('/auth/instagram/callback', passport.authenticate('instagram', { failureRedirect: '/#login' }), function(req, res) {
-	// If auth failed, redirect to login page
-	// res.redirect('/#account');
-	console.log(req.user);
-	res.send(req.user);
-});
 
 var server = http.createServer(app);
 
