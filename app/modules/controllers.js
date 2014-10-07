@@ -17,7 +17,9 @@ instaAppControllers.controller('LoginCtrl', ['$scope', '$location', '$window','A
 	function($scope, $location, $window, Auth) {
 		$scope.user = Auth.user;
 		console.log('**************Login');
-		
+		$scope.loginOauth = function(provider) {
+	        $window.location.href = '/auth/' + provider;
+	    };
 	}
 ]);
 
