@@ -2,6 +2,7 @@ if (!process.env.NODE_ENV) process.env.NODE_ENV='development'
 
 var express = require('express'),
 	http = require('http'),
+	https = require('https'),
 	passport = require('passport')
 	path = require('path')
 	morgan = require('morgan')
@@ -75,7 +76,7 @@ app.get('/auth/instagram', passport.authenticate('instagram'), function(req, res
 	// function will not be called.
 });
 
-app.get('/auth/instagram/callback', passport.authenticate('instagram', {successRedirect: '/account', failureRedirect: '/login'}), function(req, res) {
+app.get('/auth/instagram/callback', passport.authenticate('instagram', {successRedirect: '/#/account', failureRedirect: '/#/login'}), function(req, res) {
 	// res.redirect('/');
 	// // If auth failed, redirect to login page
 	// // passport.authenticate('instagram', function(err, user, info) {
@@ -91,7 +92,7 @@ app.get('/auth/instagram/callback', passport.authenticate('instagram', {successR
 	// // res.send(req.user);
 });
 
-app.get('/*', function(req, res){
+app.get('/', function(req, res){
 	// fs.readFile(__dirname + '/app/views/index.html', 'utf8', function(err, text){
  //        res.send(text);
  //    });
@@ -99,19 +100,18 @@ app.get('/*', function(req, res){
      if(req.user) {
         user = req.user._json.data;
     
-	    res.cookie('user', JSON.stringify(user));
+		res.cookie('user', JSON.stringify(user));
 	}
 
     console.log('****************************************Home');
     // console.log(user);
-    
     res.render('home');
 
 });
 
 // route to log in
 app.post('/login', function(req, res) {
-	 passport.authenticate('instagram', function(req, res, next) {
+	passport.authenticate('instagram', function(req, res, next) {
         if(err)     { return next(err); }
         // if(!user)   { return res.send(400); }
 
@@ -127,6 +127,16 @@ app.post('/login', function(req, res) {
   	// res.send(req.user);
 });
 
+// route to log in
+app.get('/getFeeds', function(req, res) {
+	console.log('Getting user feeds');
+	// console.log(Access_Token);
+	getInstaFeed(function (json) {
+		res.send(json);
+	});
+	
+});
+
 
 // route to test if the user is logged in or not
 app.get('/loggedin', function(req, res) {
@@ -139,7 +149,33 @@ app.post('/logout', function(req, res){
   res.send(200);
 });
 
+function getInstaFeed(callback) {
+	var options = {
+			host: 'api.instagram.com',
+			path: '/v1/users/self/media/recent?access_token='+ Access_Token
+		},
+		response = '';
 
+    var req = https.request(options, function (res) {
+		res.setEncoding('utf8');
+		res.on('data', function (chunk) {
+			// console.log('on data');
+			response += chunk ;
+		});
+		res.on('end', function () {
+			// console.log('on end');
+			if (callback !== null) {
+				callback(response);
+			} else {
+				console.log('Error: Use callback to receive response');
+			}
+		});
+	});
+	req.on('error', function (err) {
+        console.log('Error: ' + err.message);
+      });
+	req.end();
+}
 
 var server = http.createServer(app);
 

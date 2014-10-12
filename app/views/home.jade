@@ -20,16 +20,14 @@ body
 				.collapse.navbar-collapse
 					ul.nav.navbar-nav.pull-left
 						li
-							a(href='#feed') Feed
+							a(href='#feeds') Feeds
 					ul.nav.navbar-nav.pull-right
-						if !user
-							li
-								a(href='#login') Login
-						else
-							li
-								a(href='#account') {{user.username}}
-							li
-								a(href='#logout', ng-click='logout()') Logout
+						li(ng-if='!user')
+							a(href='#login') Login
+						li(ng-if='user')
+							a(href='#account') {{user.username}}
+						li(ng-if='user')
+							a(href='#logout', ng-click='logout()') Logout
 
 	.container.cont
 		.row-fluid(ng-view)

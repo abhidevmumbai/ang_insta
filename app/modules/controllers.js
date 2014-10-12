@@ -15,28 +15,34 @@ instaAppControllers.controller('NavCtrl', ['$rootScope', '$scope', '$location', 
     };
 }]);
 
-instaAppControllers.controller('AccountsCtrl', ['$scope', 'Auth',
-	function($scope, Auth) {
-		$scope.user = Auth.user;
+instaAppControllers.controller('AccountsCtrl', ['$rootScope', '$scope', 'Auth',
+	function($rootScope, $scope, Auth) {
+		$rootScope.user = Auth.user;
 		console.log('**************Account');
-		console.log($scope.user);
+		// console.log($rootScope.user);
 	}
 ]);
 
 instaAppControllers.controller('LoginCtrl', ['$scope', '$location', '$window','Auth',
 	function($scope, $location, $window, Auth) {
-		$scope.user = Auth.user;
 		console.log('**************Login');
 		$scope.loginOauth = function(provider) {
-	        $window.location.href = '/auth/' + provider;
-	    };
+			$window.location.href = '/auth/' + provider;
+		};
 	}
 ]);
 
-instaAppControllers.controller('FeedsCtrl', ['$scope', 'Posts',
-	function($scope, Feed) {
-	$scope.feed = null;
-	Feed.then(function (response) {
-		$scope.feed = response.data.response.feed;
+instaAppControllers.controller('FeedsCtrl', ['$scope', '$http', 'Feeds',
+	function($scope, $http, Feeds) {
+	console.log('**************Feeds');
+	$scope.feeds = null;
+	$http.get('/getFeeds')
+	.then(function(result) {
+		$scope.feed = result.data;
+		// console.log(result.data);
 	});
+	// Feeds.then(function (response) {
+	// 	$scope.feeds = response.data.response.feed;
+	// 	console.log($scope.feeds);
+	// });
 }]);

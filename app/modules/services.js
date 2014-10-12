@@ -4,9 +4,8 @@ var instaAppServices = angular.module('instaAppServices', ['ngResource', 'ngCook
 
 instaAppServices.factory('Auth', function($http, $cookieStore){
 
-    var currentUser = $cookieStore.get('user') || { user: ''};
-    console.log('currentUser: '+ currentUser);
-    $cookieStore.remove('user');
+    var currentUser = $cookieStore.get('user') || null;
+    // $cookieStore.remove('user');
 
     function changeUser(user) {
         angular.extend(currentUser, user);
@@ -27,10 +26,9 @@ instaAppServices.factory('Auth', function($http, $cookieStore){
         },
         logout: function(success, error) {
             $http.post('/logout').success(function(){
-            	changeUser({
-                    username: ''
-                });
+                changeUser(null);
                 success();
+                $cookieStore.remove('user');
             }).error(error);
         },
         user: currentUser
@@ -38,6 +36,9 @@ instaAppServices.factory('Auth', function($http, $cookieStore){
 });
 
 
-instaAppServices.factory('Feed', function($http){
+instaAppServices.factory('Feeds', function($http){
+    // $http.get('/feeds').success(function(res){
+    //     console.log(res);
 
+    // });
 });

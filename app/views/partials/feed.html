@@ -1,8 +1,10 @@
 <div class="span12">
-	<ul id="photo-list"></ul>
+	<ul id="photo-list">
+		<li ng-repeat="post in feed.data"><a href="{{ post.images.standard_resolution.url }}" target="blank"><img src="{{ post.images.thumbnail.url }}" /></a></li>
+	</ul>
 	<div class="spinner"></div>
 </div>
-<script type="text/javascript">
+<!-- script type="text/javascript">
 	feeds.token="#{token}";
 	feeds.init();
-</script>
+</script -->
